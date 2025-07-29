@@ -1,5 +1,0 @@
-services:
-  go-dicom-conv:
-    build:
-      context: .
-      dockerfile: Dockerfile
