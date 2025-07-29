@@ -5,6 +5,8 @@ A commonly used alternative is to invoke the gdcmconv CLI tool directly (using h
 
 Calling an external process means incurring system call overhead, which is not negligible, especially when processing a large number of files. The CGO approach allows for more efficient memory management and potentially better performance.
 
+For more information on CGO, see https://pkg.go.dev/cmd/cgo.
+
 ## Performance comparison
 ![CGO vs External process performance comparison](CGO%20vs%20External%20process%20%28Node.js%29.png)
 
