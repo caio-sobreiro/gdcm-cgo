@@ -1,37 +1,9 @@
 #include <gdcmReader.h>
-#include <gdcmFileDerivation.h>
-#include <gdcmAnonymizer.h>
-#include <gdcmVersion.h>
 #include <gdcmPixmapReader.h>
 #include <gdcmPixmapWriter.h>
 #include <gdcmWriter.h>
-#include <gdcmSystem.h>
-#include <gdcmFileMetaInformation.h>
-#include <gdcmDataSet.h>
-#include <gdcmIconImageGenerator.h>
 #include <gdcmAttribute.h>
-#include <gdcmSequenceOfItems.h>
-#include <gdcmUIDGenerator.h>
-#include <gdcmImage.h>
 #include <gdcmImageChangeTransferSyntax.h>
-#include <gdcmImageApplyLookupTable.h>
-#include <gdcmFileDecompressLookupTable.h>
-#include <gdcmImageFragmentSplitter.h>
-#include <gdcmImageChangePlanarConfiguration.h>
-#include <gdcmImageChangePhotometricInterpretation.h>
-#include <gdcmFileExplicitFilter.h>
-#include <gdcmJPEG2000Codec.h>
-#include <gdcmJPEGCodec.h>
-#include <gdcmJPEGLSCodec.h>
-#include <gdcmSequenceOfFragments.h>
-
-#include <string>
-#include <iostream>
-
-#include <stdio.h>  /* for printf */
-#include <stdlib.h> /* for exit */
-#include <getopt.h>
-#include <string.h>
 
 int change_transfersyntax(const std::string &filename, const std::string &outfilename)
 {
@@ -101,9 +73,6 @@ extern "C" int convert_to_jpeg2000(const std::string &filename, const std::strin
   }
   gdcm::Pixmap &image = reader.GetPixmap();
 
-  gdcm::JPEG2000Codec j2kcodec;
-  gdcm::JPEGCodec jpegcodec;
-  gdcm::JPEGLSCodec jpeglscodec;
   gdcm::ImageChangeTransferSyntax change;
   change.SetForce(false);
   change.SetCompressIconImage(false);

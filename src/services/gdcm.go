@@ -13,6 +13,7 @@ import "C"
 import (
 	"fmt"
 	"os"
+	"path"
 	"unsafe"
 )
 
@@ -42,8 +43,8 @@ func CompressSeries(inputPath string, outputPath string, concurrent int) error {
 	defer close(pool)
 
 	for _, file := range files {
-		inputPath := "input/" + file.Name()
-		outputPath := "output/" + file.Name()
+		inputPath := path.Join(inputPath, file.Name())
+		outputPath := path.Join(outputPath, file.Name())
 
 		pool <- struct{}{} // acquire a slot in the pool
 		go func(inputPath, outputPath string) {

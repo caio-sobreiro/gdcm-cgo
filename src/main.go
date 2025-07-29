@@ -24,7 +24,7 @@ func main() {
 	fmt.Printf("Starting compression with %d concurrent goroutines...\n", concurrent)
 
 	start := time.Now()
-	err := services.CompressSeries("input", "output", concurrent)
+	err := services.CompressSeries("../input", "../output", concurrent)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 	}
