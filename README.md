@@ -3,6 +3,8 @@ This is a proof-of-concept project that implements a wrapper on the C++ GDCM lib
 
 A commonly used alternative is to invoke the gdcmconv CLI tool directly (using https://pkg.go.dev/os/exec or https://nodejs.org/api/child_process.html), but the CGO approach has proven to be around 25% faster (see below).
 
+Calling an external process means incurring system call overhead, which is not negligible, especially when processing a large number of files. The CGO approach allows for more efficient memory management and potentially better performance.
+
 ## Performance comparison
 ![CGO vs External process performance comparison](CGO%20vs%20External%20process%20%28Node.js%29.png)
 
