@@ -14,17 +14,19 @@ For more information on CGO, see https://pkg.go.dev/cmd/cgo.
 1- Compile the C++ GDCM wrapper
 Note the arm64 architecture - adjust if necessary
 ```bash
-cd cgdcm
+cd src/cgdcm
 g++ -std=c++11 -arch arm64 -I/usr/local/include/gdcm-3.3 -c gdcmconv.cpp -o gdcmconv.o
 ```
 
 2- Add your DICOM files to the `input` folder (create one if it doesn't exist), then run:
 
 ```bash
+cd src/
 go run main.go [concurrency]
 ```
 or
 ```bash
+cd src/
 go build -o go-gdcm .
 ./go-gdcm [concurrency]
 ```
