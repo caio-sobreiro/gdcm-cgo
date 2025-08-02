@@ -12,7 +12,7 @@ import "C"
 
 import (
 	"fmt"
-	"os"
+	"os/exec"
 	"path"
 	"unsafe"
 )
@@ -26,35 +26,52 @@ func ConvertToJPEG2000(inputPath, outputPath string) error {
 
 	result := C.convert_to_jpeg2000(inputPathPtr, outputPathPtr)
 	if result != 0 {
-		return fmt.Errorf("failed to convert DICOM file to JPEG2000.")
+		return fmt.Errorf("failed to convert DICOM file to JPEG2000")
 	}
 	return nil
 }
 
-func CompressSeries(inputPath string, outputPath string, concurrent int) error {
-	files, err := os.ReadDir(inputPath)
-	if err != nil {
-		fmt.Println("Error reading input directory:", err)
-		return err
-	}
-
+func CompressSeries(inputFiles []string, outputPath string, concurrent int) error {
 	// create goroutine pool for concurrent processing
 	pool := make(chan struct{}, concurrent) // limit to N concurrent goroutines
 	defer close(pool)
 
-	for _, file := range files {
-		inputPath := path.Join(inputPath, file.Name())
-		outputPath := path.Join(outputPath, file.Name())
+	for _, file := range inputFiles {
+		outputPath := path.Join(outputPath, path.Base(file))
 
 		pool <- struct{}{} // acquire a slot in the pool
-		go func(inputPath, outputPath string) {
+		go func(file, outputPath string) {
 			defer func() { <-pool }() // release the slot when done
-			if err := ConvertToJPEG2000(inputPath, outputPath); err != nil {
+			if err := ConvertToJPEG2000(file, outputPath); err != nil {
 				fmt.Println("Error converting file:", err)
-			} else {
-				fmt.Println("Successfully converted:", outputPath)
 			}
-		}(inputPath, outputPath)
+		}(file, outputPath)
+	}
+
+	// Wait for all goroutines to finish
+	for i := 0; i < cap(pool); i++ {
+		pool <- struct{}{}
+	}
+	return nil
+}
+
+func CompressSeriesOld(inputFiles []string, outputPath string, concurrent int) error {
+	// create goroutine pool for concurrent processing
+	pool := make(chan struct{}, concurrent) // limit to N concurrent goroutines
+	defer close(pool)
+
+	for _, file := range inputFiles {
+		outputPath := path.Join(outputPath, path.Base(file))
+
+		pool <- struct{}{} // acquire a slot in the pool
+		go func(file, outputPath string) {
+			defer func() { <-pool }()
+			cmd := exec.Command("gdcmconv", "--j2k", file, outputPath)
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("Error converting file:", err)
+			}
+		}(file, outputPath)
 	}
 
 	// Wait for all goroutines to finish
