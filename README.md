@@ -1,3 +1,7 @@
+# POC
+This project is a proof-of-concept (POC) for transcoding DICOM images to JPEG2000 using the GDCM library in Go.
+I have started an actual library implementation at https://github.com/caio-sobreiro/gdcmconv-go that should eventually include all of the functionality of the gdcmconv tool.
+
 # GDCM CGO implementation
 This is a proof-of-concept project that implements a wrapper on the C++ GDCM library for transcoding a DICOM image into JPEG2000.
 
