@@ -1,8 +1,8 @@
 package services
 
 /*
-#cgo CXXFLAGS: -std=c++11 -I/usr/local/include/gdcm-3.3
-#cgo LDFLAGS: -L/usr/local/lib -lgdcmMSFF -lgdcmDICT -lgdcmCommon -lexpat -lstdc++ -lgdcmDSED cgdcm/gdcmconv.o
+#cgo CXXFLAGS: -std=c++23 -I/usr/local/include/gdcm-3.3
+#cgo LDFLAGS: -L/usr/local/lib -lgdcmMSFF -lgdcmCommon -lgdcmDSED
 
 #include <stdlib.h>
 
