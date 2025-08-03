@@ -5,59 +5,6 @@
 #include <gdcmAttribute.h>
 #include <gdcmImageChangeTransferSyntax.h>
 
-int change_transfersyntax(const std::string &filename, const std::string &outfilename)
-{
-  gdcm::Reader reader;
-  reader.SetFileName(filename.c_str());
-  if (!reader.Read())
-  {
-    std::cerr << "Could not read: " << filename << std::endl;
-    return 1;
-  }
-  gdcm::MediaStorage ms;
-  ms.SetFromFile(reader.GetFile());
-  if (ms == gdcm::MediaStorage::MediaStorageDirectoryStorage)
-  {
-    std::cerr << "Sorry DICOMDIR is not supported" << std::endl;
-    return 1;
-  }
-
-  gdcm::Writer writer;
-  writer.SetFileName(outfilename.c_str());
-  writer.SetFile(reader.GetFile());
-  gdcm::File &file = writer.GetFile();
-  gdcm::FileMetaInformation &fmi = file.GetHeader();
-
-  const gdcm::TransferSyntax &orits = fmi.GetDataSetTransferSyntax();
-  if (orits != gdcm::TransferSyntax::ExplicitVRLittleEndian && orits != gdcm::TransferSyntax::ImplicitVRLittleEndian && orits != gdcm::TransferSyntax::DeflatedExplicitVRLittleEndian)
-  {
-    std::cerr << "Sorry input Transfer Syntax not supported for this conversion: " << orits << std::endl;
-    return 1;
-  }
-
-  gdcm::TransferSyntax ts = gdcm::TransferSyntax::ImplicitVRLittleEndian;
-  std::string tsuid = gdcm::TransferSyntax::GetTSString(ts);
-  if (tsuid.size() % 2 == 1)
-  {
-    tsuid.push_back(0); // 0 padding
-  }
-  gdcm::DataElement de(gdcm::Tag(0x0002, 0x0010));
-  de.SetByteValue(tsuid.data(), (uint32_t)tsuid.size());
-  de.SetVR(gdcm::Attribute<0x0002, 0x0010>::GetVR());
-  fmi.Clear();
-  fmi.Replace(de);
-
-  fmi.SetDataSetTransferSyntax(ts);
-
-  if (!writer.Write())
-  {
-    std::cerr << "Failed to write: " << outfilename << std::endl;
-    return 1;
-  }
-
-  return 0;
-}
-
 extern "C" int convert_to_jpeg2000(const std::string &filename, const std::string &outfilename)
 {
   gdcm::FileMetaInformation::SetSourceApplicationEntityTitle("gdcmconv");
