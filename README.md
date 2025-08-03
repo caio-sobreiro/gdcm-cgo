@@ -19,12 +19,10 @@ For more information on CGO, see https://pkg.go.dev/cmd/cgo.
 
 2- Run:
 ```bash
-cd src/
-go run main.go [concurrency]
+go run cmd/gdcm-go/main.go [concurrency]
 ```
 or
 ```bash
-cd src/
-go build -o go-gdcm .
-./go-gdcm [concurrency]
+go build -o gdcm-go cmd/gdcm-go/main.go
+./gdcm-go [concurrency]
 ```

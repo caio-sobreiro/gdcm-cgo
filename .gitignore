@@ -1,3 +1,4 @@
 gdcmconv.o
 input/*
 output*/*
+/gdcm-go

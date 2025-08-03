@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"go-dicom-conv/services"
+	"gdcmconv-go/internal/services"
 )
 
 func main() {
@@ -27,7 +27,11 @@ func main() {
 		concurrent = 10 // default concurrency level
 	}
 
-	files, err := os.ReadDir("../input")
+	inputDir := "input"
+	outputCgoDir := "output-cgo"
+	outputGdcmDir := "output-gdcm"
+
+	files, err := os.ReadDir(inputDir)
 	if err != nil {
 		fmt.Println("Error reading input directory:", err)
 		log.Fatal(err)
@@ -36,16 +40,16 @@ func main() {
 	var inputFiles []string
 	for _, file := range files {
 		if !file.IsDir() {
-			inputFiles = append(inputFiles, path.Join("../input", file.Name()))
+			inputFiles = append(inputFiles, path.Join(inputDir, file.Name()))
 		}
 	}
 
-	os.Mkdir("../output-cgo", 0755)
-	os.Mkdir("../output-gdcm", 0755)
+	os.Mkdir(outputCgoDir, 0755)
+	os.Mkdir(outputGdcmDir, 0755)
 
 	fmt.Printf("Compressing %d files with %d concurrent goroutines using CGO...\n", len(inputFiles), concurrent)
 	startCgo := time.Now()
-	err = services.CompressSeries(inputFiles, "../output-cgo", concurrent)
+	err = services.CompressSeries(inputFiles, outputCgoDir, concurrent)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 	}
@@ -55,7 +59,7 @@ func main() {
 	// Compress series using the old method for comparison
 	fmt.Printf("Compressing %d files with %d concurrent goroutines using gdcmconv...\n", len(inputFiles), concurrent)
 	startGdcm := time.Now()
-	err = services.CompressSeriesOld(inputFiles, "../output-gdcm", concurrent)
+	err = services.CompressSeriesOld(inputFiles, outputGdcmDir, concurrent)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 	}
@@ -72,11 +76,11 @@ func main() {
 	// proof that the output files are the same
 	fmt.Println()
 	fmt.Println("Proof that the output files are the same:")
-	fmt.Println("Comparing files in ../output-cgo and ../output-gdcm by sha256 hash...")
+	fmt.Printf("Comparing files in %s and %s by sha256 hash...\n", outputCgoDir, outputGdcmDir)
 	allMatch := true
 	for _, file := range inputFiles {
-		hashCgo, _ := hashFile(path.Join("../output-cgo", path.Base(file)))
-		hashGdcm, _ := hashFile(path.Join("../output-gdcm", path.Base(file)))
+		hashCgo, _ := hashFile(path.Join(outputCgoDir, path.Base(file)))
+		hashGdcm, _ := hashFile(path.Join(outputGdcmDir, path.Base(file)))
 		if hashCgo != hashGdcm {
 			fmt.Printf("File %s differs between CGO and gdcmconv outputs\n", path.Base(file))
 			allMatch = false
