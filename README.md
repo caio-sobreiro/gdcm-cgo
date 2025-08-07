@@ -12,7 +12,7 @@ Calling an external process means incurring system call overhead, which is not n
 For more information on CGO, see https://pkg.go.dev/cmd/cgo.
 
 ## Performance comparison
-![CGO vs External process performance comparison](CGO%20vs%20External%20process%20%28Node.js%29.png)
+![CGO vs External process performance comparison](./CGO%20vs%20External%20process.png)
 
 ## Running the project
 1- Add your DICOM files to the `input` folder (create one if it doesn't exist)
